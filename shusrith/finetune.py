@@ -41,11 +41,13 @@ val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True, num_workers=4)
 model = EfficientNet(
     num_classes=143, width_coefficient=1.0, depth_coefficient=1.0, dropout_rate=0.2
 ).to("cuda")
+
+
 model.load_state_dict(torch.load("resnet50_best.pth"))
 
 # Define the loss function and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.00025)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(
     optimizer, "min", patience=3, factor=0.5
 )
@@ -101,43 +103,4 @@ for epoch in range(num_epochs):
     )
 
     # Adjust learning rate based on validation loss
-    prev_lr = optimizer.param_groups[0]["lr"]
     scheduler.step(val_loss)
-    current_lr = optimizer.param_groups[0]["lr"]
-    if current_lr < prev_lr:
-        print(f"Learning rate reduced to {current_lr}")
-
-
-print("Finished Training")
-
-# Load the best model
-model.load_state_dict(torch.load("resnet50_best.pth"))
-
-class_labels = train_dataset.classes
-
-test_image_folder = "/home/shusrith/Downloads/aoml-hackathon-1/dataset/test"
-test_image_paths = [
-    os.path.join(test_image_folder, fname) for fname in os.listdir(test_image_folder)
-]
-
-predicted_class = []
-file_paths = []
-
-# Perform inference on the test dataset
-with torch.no_grad():
-    for image_path in tqdm(test_image_paths):
-        image = Image.open(image_path)
-        image = (
-            transform(image).unsqueeze(0).to("cuda")
-        )  # Add batch dimension and move to GPU
-        outputs = model(image)
-        _, predicted = torch.max(outputs, 1)
-        predicted_class.append(class_labels[predicted.item()])
-        file_paths.append(image_path)
-
-# Create a DataFrame
-df = pd.DataFrame({"Image_Name": file_paths, "Class": predicted_class})
-df["Image_Name"] = df["Image_Name"].apply(lambda x: x.split("/")[-1])
-
-# Save to CSV
-df.to_csv("submission.csv", index=False)
