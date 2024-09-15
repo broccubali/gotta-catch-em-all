@@ -56,7 +56,7 @@ train_dataset = datasets.ImageFolder(
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=4)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
-num_epochs = 10
+num_epochs = 50
 for epoch in range(num_epochs):
     model.train()  # Set the model to training mode
     running_loss = 0.0

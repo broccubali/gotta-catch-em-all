@@ -1,173 +1,59 @@
 import pandas as pd
-import resnet 
+from tqdm import tqdm
 import torch
-import os
+from torchvision import datasets, transforms
 from PIL import Image
-from torchvision import transforms
+import resnet
+import os
 
+# Define the transformations (same as used during training)
+transform = transforms.Compose(
+    [
+        transforms.Resize((224, 224)),  # Resize images to 224x224
+        transforms.ToTensor(),  # Convert image to tensor
+        transforms.Normalize(
+            mean=[0.6020, 0.5866, 0.5546], std=[0.2477, 0.2404, 0.2478]
+        ),  # Normalize with ImageNet stats
+    ]
+)
+
+# Load the trained model
 model = resnet.resnet50(num_classes=143).to("cuda")
 model.load_state_dict(torch.load("resnet50.pth"))
-labels = {
-    "Golbat": 0,
-    "Beedrill": 1,
-    "Caterpie": 2,
-    "Clefable": 3,
-    "Raichu": 4,
-    "Sandslash": 5,
-    "Metapod": 6,
-    "Drowzee": 7,
-    "Oddish": 8,
-    "Charizard": 9,
-    "Tauros": 10,
-    "Ponyta": 11,
-    "Primeape": 12,
-    "Spearow": 13,
-    "Mankey": 14,
-    "Poliwag": 15,
-    "Rattata": 16,
-    "Tentacruel": 17,
-    "Graveler": 18,
-    "Koffing": 19,
-    "Zapdos": 20,
-    "Articuno": 21,
-    "Psyduck": 22,
-    "Bellsprout": 23,
-    "Lapras": 24,
-    "Butterfree": 25,
-    "Weezing": 26,
-    "Abra": 27,
-    "Cloyster": 28,
-    "Porygon": 29,
-    "Flareon": 30,
-    "Jigglypuff": 31,
-    "Raticate": 32,
-    "Venusaur": 33,
-    "Dewgong": 34,
-    "Horsea": 35,
-    "Rhydon": 36,
-    "Omanyte": 37,
-    "Exeggcute": 38,
-    "Ditto": 39,
-    "Growlithe": 40,
-    "Mew": 41,
-    "Electrode": 42,
-    "Vileplume": 43,
-    "Seaking": 44,
-    "Exeggutor": 45,
-    "Electabuzz": 46,
-    "Chansey": 47,
-    "Magmar": 48,
-    "Haunter": 49,
-    "Ninetales": 50,
-    "Clefairy": 51,
-    "Gyarados": 52,
-    "Tangela": 53,
-    "Marowak": 54,
-    "Snorlax": 55,
-    "Nidoqueen": 56,
-    "Hitmonchan": 57,
-    "Ekans": 58,
-    "Sandshrew": 59,
-    "Jolteon": 60,
-    "Kabutops": 61,
-    "Lickitung": 62,
-    "Pidgeotto": 63,
-    "Shellder": 64,
-    "Slowpoke": 65,
-    "Pikachu": 66,
-    "Poliwrath": 67,
-    "Fearow": 68,
-    "Magnemite": 69,
-    "Hitmonlee": 70,
-    "Machoke": 71,
-    "Poliwhirl": 72,
-    "Magneton": 73,
-    "Diglett": 74,
-    "Venonat": 75,
-    "Kakuna": 76,
-    "Eevee": 77,
-    "Ivysaur": 78,
-    "Doduo": 79,
-    "Wigglytuff": 80,
-    "Goldeen": 81,
-    "Alakazam": 82,
-    "Starmie": 83,
-    "Grimer": 84,
-    "Pinsir": 85,
-    "Tentacool": 86,
-    "Mewtwo": 87,
-    "Dodrio": 88,
-    "Kangaskhan": 89,
-    "Arcanine": 90,
-    "Dratini": 91,
-    "Aerodactyl": 92,
-    "Gastly": 93,
-    "Geodude": 94,
-    "Magikarp": 95,
-    "Zubat": 96,
-    "Machamp": 97,
-    "Victreebel": 98,
-    "Wartortle": 99,
-    "Omastar": 100,
-    "Meowth": 101,
-    "Nidorina": 102,
-    "Mr. Mime": 103,
-    "Bulbasaur": 104,
-    "Farfetchd": 105,
-    "Rapidash": 106,
-    "Seel": 107,
-    "Blastoise": 108,
-    "Venomoth": 109,
-    "Hypno": 110,
-    "Golduck": 111,
-    "Nidoking": 112,
-    "Vaporeon": 113,
-    "Dragonite": 114,
-    "Pidgeot": 115,
-    "Machop": 116,
-    "Moltres": 117,
-    "Scyther": 118,
-    "MrMime": 119,
-    "Cubone": 120,
-    "Gengar": 121,
-    "Kingler": 122,
-    "Dugtrio": 123,
-    "Gloom": 124,
-    "Parasect": 125,
-    "Seadra": 126,
-    "Squirtle": 127,
-    "Nidorino": 128,
-    "Charmander": 129,
-    "Jynx": 130,
-    "Dragonair": 131,
-    "Arbok": 132,
-    "Weedle": 133,
-    "Pidgey": 134,
-    "Kadabra": 135,
-    "Rhyhorn": 136,
-    "Weepinbell": 137,
-    "Charmeleon": 138,
-    "Staryu": 139,
-    "Voltorb": 140,
-    "Slowbro": 141,
-    "Vulpix": 142,
-}
+model.eval()  # Set the model to evaluation mode
 
+# Load the class labels
+train_dataset = datasets.ImageFolder(
+    root="/home/shusrith/Downloads/aoml-hackathon-1/dataset/train", transform=transform
+)
+class_labels = train_dataset.classes
+print("Class labels:", class_labels)
 
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.6020, 0.5866, 0.5546], std=[0.2477, 0.2404, 0.2478])
-])
+# Load test images
+test_image_folder = "/home/shusrith/Downloads/aoml-hackathon-1/dataset/test"
+test_image_paths = [
+    os.path.join(test_image_folder, fname)
+    for fname in os.listdir(test_image_folder)
+    if fname.endswith((".png", ".jpg", ".jpeg"))
+]
 
-paths = os.listdir("/home/shusrith/Downloads/aoml-hackathon-1/dataset/test/")
-l = []
-for i in paths:
-    img = Image.open(f"/home/shusrith/Downloads/aoml-hackathon-1/dataset/test/{i}")
-    img = transform(img).unsqueeze(0).to("cuda")
-    pred = model(img)
-    pred = torch.argmax(pred)
-    l.append([i, list(labels.keys())[list(labels.values()).index(pred.item())]])
+predicted_class = []
+file_paths = []
 
-df = pd.DataFrame(l, columns=["Image", "Name"])
+# Perform inference on the test dataset
+with torch.no_grad():
+    for image_path in tqdm(test_image_paths):
+        image = Image.open(image_path)
+        image = (
+            transform(image).unsqueeze(0).to("cuda")
+        )  # Add batch dimension and move to GPU
+        outputs = model(image)
+        _, predicted = torch.max(outputs, 1)
+        predicted_class.append(class_labels[predicted.item()])
+        file_paths.append(image_path)
+
+# Create a DataFrame
+df = pd.DataFrame({"Image_name": file_paths, "Class": predicted_class})
+
+# Save to CSV
 df.to_csv("submission.csv", index=False)
