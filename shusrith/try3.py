@@ -45,7 +45,7 @@ model.load_state_dict(torch.load("resnet50_best.pth"))
 
 # Define the loss function and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.00025)
+optimizer = optim.Adam(model.parameters(), lr=7.8125e-06)
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(
     optimizer, "min", patience=3, factor=0.5
 )
