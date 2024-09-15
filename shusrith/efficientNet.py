@@ -124,8 +124,8 @@ class EfficientNet(nn.Module):
         x = self.fc(x)
         return x
 
-# Example of using EfficientNet
-model = EfficientNet(num_classes=1000, width_coefficient=1.0, depth_coefficient=1.0, dropout_rate=0.2)
-x = torch.randn(1, 3, 224, 224)
-output = model(x)
-print(output.shape)
+# # Example of using EfficientNet
+# model = EfficientNet(num_classes=1000, width_coefficient=1.0, depth_coefficient=1.0, dropout_rate=0.2)
+# x = torch.randn(1, 3, 224, 224)
+# output = model(x)
+# print(output.shape)
