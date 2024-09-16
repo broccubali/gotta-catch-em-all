@@ -72,6 +72,9 @@ class DenseNet(nn.Module):
         # Final batch normalization
         self.bn2 = nn.BatchNorm2d(num_channels)
 
+        # Dropout layer
+        self.dropout = nn.Dropout(0.5)
+
         # Linear classifier
         self.fc = nn.Linear(num_channels, num_classes)
 
@@ -82,6 +85,7 @@ class DenseNet(nn.Module):
         out = F.relu(self.bn2(out))
         out = F.adaptive_avg_pool2d(out, (1, 1))
         out = out.view(out.size(0), -1)
+        out = self.dropout(out)
         out = self.fc(out)
         return out
 
@@ -100,6 +104,3 @@ def DenseNet201(num_classes=1000):
 
 def DenseNet161(num_classes=1000):
     return DenseNet(num_blocks=[6, 12, 36, 24], growth_rate=48, num_classes=num_classes)
-
-
-

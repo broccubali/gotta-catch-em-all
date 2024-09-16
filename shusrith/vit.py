@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import densenet
+from torchvision.models import vit_b_16
 
 # Define the transformations (with additional data augmentation)
 transform = transforms.Compose(
@@ -21,7 +21,7 @@ transform = transforms.Compose(
         transforms.ToTensor(),  # Convert image to tensor
         transforms.Normalize(
             mean=[0.6020, 0.5866, 0.5546], std=[0.2477, 0.2404, 0.2478]
-        ),  
+        ),  # Normalize with ImageNet stats
     ]
 )
 
@@ -37,11 +37,19 @@ val_dataset = datasets.ImageFolder(
 )
 val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True, num_workers=4)
 
-# Define the model
-model = densenet.DenseNet201(num_classes=143).to("cuda")
+# Load Vision Transformer Model
+model = vit_b_16(pretrained=True)
+model.heads = nn.Sequential(
+    nn.Linear(model.heads[0].in_features, 512),
+    nn.ReLU(),
+    nn.Dropout(0.3),
+    nn.Linear(512, 143),  # Adjust the output layer to match your 143 classes
+)
+model = model.to("cuda")
 
+# Define loss function and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=7.8125e-06)
+optimizer = optim.Adam(model.parameters(), lr=0.01)
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(
     optimizer, "min", patience=3, factor=0.5
 )
@@ -105,9 +113,9 @@ for epoch in range(num_epochs):
 
 print("Finished Training")
 
+torch.save(model.state_dict(), "vit_b_16.pth")
 
-torch.save(model.state_dict(), "densenet161.pth")
-
+# Predict on the test dataset
 class_labels = train_dataset.classes
 
 test_image_folder = "/home/shusrith/Downloads/aoml-hackathon-1/dataset/test"
