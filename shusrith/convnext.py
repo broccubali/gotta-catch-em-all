@@ -1,5 +1,5 @@
 from tqdm import tqdm
-from torchvision import datasets, transforms, models
+from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 import torch.nn as nn
 import torch
@@ -7,14 +7,10 @@ import torch.optim as optim
 import pandas as pd
 import os
 from PIL import Image
+import timm
 
-# Load the pre-trained Inception v3 model
-model = models.inception_v3(pretrained=True)
-
-# Modify the final layer to match the number of classes in your dataset
-num_classes = 143  # Set to your dataset's number of classes
-model.AuxLogits.fc = nn.Linear(model.AuxLogits.fc.in_features, num_classes)
-model.fc = nn.Linear(model.fc.in_features, num_classes)
+# Load the pre-trained ConvNeXt Large model
+model = timm.create_model("convnext_base", pretrained=True, num_classes=143)
 
 # Move the entire model to GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -23,7 +19,7 @@ model.to(device)
 # Define the transformations (with additional data augmentation)
 transform = transforms.Compose(
     [
-        transforms.Resize((299, 299)),  # Resize images to 299x299 for Inception v3
+        transforms.Resize((224, 224)),  # Resize images to 224x224
         transforms.RandomHorizontalFlip(),  # Random horizontal flip
         transforms.RandomRotation(10),  # Random rotation
         transforms.ColorJitter(
@@ -40,16 +36,15 @@ transform = transforms.Compose(
 num_epochs = 50
 criterion = nn.CrossEntropyLoss()  # For classification
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
+scheduler = torch.optim.lr_scheduler.reduceLROnPlateau(optimizer, mode='min', patience=3, factor=0.5)
 
 train_dataset = datasets.ImageFolder(
-    root="/home/shusrith/Downloads/aoml-hackathon-1/dataset/train", transform=transform
+    root="/kaggle/input/aoml-hackathon-1/dataset/train", transform=transform
 )
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=4)
 
 val_dataset = datasets.ImageFolder(
-    root="/home/shusrith/Downloads/aoml-hackathon-1/dataset/validation",
-    transform=transform,
+    root="/kaggle/input/aoml-hackathon-1/dataset/validation", transform=transform
 )
 val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True, num_workers=4)
 
@@ -65,10 +60,8 @@ for epoch in range(num_epochs):
 
         optimizer.zero_grad()  # Zero the parameter gradients
 
-        outputs, aux_outputs = model(inputs)  # Forward pass
-        loss1 = criterion(outputs, labels)  # Compute loss for main output
-        loss2 = criterion(aux_outputs, labels)  # Compute loss for auxiliary output
-        loss = loss1 + 0.4 * loss2  # Combine losses
+        outputs = model(inputs)  # Forward pass
+        loss = criterion(outputs, labels)  # Compute loss
         loss.backward()  # Backward pass
         optimizer.step()  # Update weights
 
@@ -99,18 +92,21 @@ for epoch in range(num_epochs):
         f"Epoch {epoch+1}/{num_epochs}, Loss: {epoch_loss:.4f}, Validation Loss: {val_loss:.4f}"
     )
 
-    scheduler.step()
+    prev_lr = optimizer.param_groups[0]["lr"]
+    scheduler.step(val_loss)
     current_lr = optimizer.param_groups[0]["lr"]
-    print(f"Current learning rate: {current_lr}")
+    if current_lr < prev_lr:
+        print(f"Learning rate reduced to {current_lr}")
+
 
 print("Finished Training")
 
 # Save the model's state dictionary
-torch.save(model.state_dict(), "inception_v3.pth")
+torch.save(model.state_dict(), "convnext_large.pth")
 
 class_labels = train_dataset.classes
 
-test_image_folder = "/home/shusrith/Downloads/aoml-hackathon-1/dataset/test"
+test_image_folder = "/kaggle/input/aoml-hackathon-1/dataset/test"
 test_image_paths = [
     os.path.join(test_image_folder, fname) for fname in os.listdir(test_image_folder)
 ]
