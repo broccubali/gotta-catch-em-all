@@ -32,7 +32,7 @@ transform = transforms.Compose(
         ),  # Random color jitter
         transforms.ToTensor(),  # Convert image to tensor
         transforms.Normalize(
-            mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+            mean=[0.6020, 0.5866, 0.5546], std=[0.2477, 0.2404, 0.2478]
         ),  # Normalize with ImageNet stats
     ]
 )
@@ -40,7 +40,7 @@ transform = transforms.Compose(
 # Define the loss function and optimizer
 num_epochs = 50
 criterion = nn.CrossEntropyLoss()  # For classification
-optimizer = torch.optim.Adam(model.parameters(), lr=8e-06)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-06)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
 
 train_dataset = datasets.ImageFolder(
