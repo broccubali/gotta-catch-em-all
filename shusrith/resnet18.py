@@ -15,6 +15,7 @@ model = models.inception_v3(pretrained=True)
 num_classes = 143  # Set to your dataset's number of classes
 model.AuxLogits.fc = nn.Linear(model.AuxLogits.fc.in_features, num_classes)
 model.fc = nn.Linear(model.fc.in_features, num_classes)
+model.load_state_dict(torch.load("inception_v3.pth"))
 
 # Move the entire model to GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -39,7 +40,7 @@ transform = transforms.Compose(
 # Define the loss function and optimizer
 num_epochs = 50
 criterion = nn.CrossEntropyLoss()  # For classification
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=8e-06)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
 
 train_dataset = datasets.ImageFolder(
@@ -106,7 +107,7 @@ for epoch in range(num_epochs):
 print("Finished Training")
 
 # Save the model's state dictionary
-torch.save(model.state_dict(), "inception_v3.pth")
+torch.save(model.state_dict(), "inception_v3_1.pth")
 
 class_labels = train_dataset.classes
 
