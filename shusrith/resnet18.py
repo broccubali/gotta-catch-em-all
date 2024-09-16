@@ -15,7 +15,7 @@ model = models.inception_v3(pretrained=True)
 num_classes = 143  # Set to your dataset's number of classes
 model.AuxLogits.fc = nn.Linear(model.AuxLogits.fc.in_features, num_classes)
 model.fc = nn.Linear(model.fc.in_features, num_classes)
-model.load_state_dict(torch.load("inception_v3.pth"))
+# model.load_state_dict(torch.load("inception_v3.pth"))
 
 # Move the entire model to GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
