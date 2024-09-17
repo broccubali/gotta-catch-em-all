@@ -8,35 +8,13 @@ import pandas as pd
 import os
 from PIL import Image
 
-# Load the pre-trained Inception v3 model
-model = models.inception_v3(pretrained=True)
+# Load the pre-trained ResNet-101 model
+model = models.resnet101(pretrained=True)
 
-# Modify the final layer to match the number of classes in your dataset
+# Modify the final fully connected layer to match the number of classes in your dataset
 num_classes = 143  # Set to your dataset's number of classes
-model.AuxLogits.fc = nn.Sequential(
-    nn.Dropout(p=0.3), nn.Linear(model.AuxLogits.fc.in_features, num_classes)
-)
-model.fc = nn.Sequential(
-    nn.Dropout(p=0.3), nn.Linear(model.fc.in_features, num_classes)
-)
-state_dict = torch.load("inception_v3_1.pth")
+model.fc = nn.Linear(model.fc.in_features, num_classes)
 
-# Update the keys to match the new model structure
-new_state_dict = {}
-for key, value in state_dict.items():
-    if key == "AuxLogits.fc.weight":
-        new_state_dict["AuxLogits.fc.1.weight"] = value
-    elif key == "AuxLogits.fc.bias":
-        new_state_dict["AuxLogits.fc.1.bias"] = value
-    elif key == "fc.weight":
-        new_state_dict["fc.1.weight"] = value
-    elif key == "fc.bias":
-        new_state_dict["fc.1.bias"] = value
-    else:
-        new_state_dict[key] = value
-
-# Load the updated state dictionary into the model
-model.load_state_dict(new_state_dict)
 # Move the entire model to GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
@@ -44,7 +22,7 @@ model.to(device)
 # Define the transformations (with additional data augmentation)
 transform = transforms.Compose(
     [
-        transforms.Resize((299, 299)),  # Resize images to 299x299 for Inception v3
+        transforms.Resize((299, 299)),  # Resize images to match size for ResNet-101
         transforms.RandomHorizontalFlip(),  # Random horizontal flip
         transforms.RandomRotation(10),  # Random rotation
         transforms.ColorJitter(
@@ -58,10 +36,10 @@ transform = transforms.Compose(
 )
 
 # Define the loss function and optimizer
-num_epochs = 20
+num_epochs = 50
 criterion = nn.CrossEntropyLoss()  # For classification
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-06)
-# scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
 
 train_dataset = datasets.ImageFolder(
     root="/home/shusrith/Downloads/aoml-hackathon-1/dataset/train", transform=transform
@@ -74,27 +52,26 @@ val_dataset = datasets.ImageFolder(
 )
 val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True, num_workers=4)
 
-device = "cuda"
+# Training loop
 for epoch in range(num_epochs):
     model.train()  # Set the model to training mode
     running_loss = 0.0
 
     for inputs, labels in tqdm(train_loader):
-        inputs, labels = inputs.to("cuda"), labels.to(
-            "cuda"
+        inputs, labels = inputs.to(device), labels.to(
+            device
         )  # Move data to GPU if available
 
         optimizer.zero_grad()  # Zero the parameter gradients
 
-        outputs, aux_outputs = model(inputs)  # Forward pass
-        loss1 = criterion(outputs, labels)  # Compute loss for main output
-        loss2 = criterion(aux_outputs, labels)  # Compute loss for auxiliary output
-        loss = loss1 + 0.4 * loss2  # Combine losses
+        outputs = model(inputs)  # Forward pass
+        loss = criterion(outputs, labels)  # Compute loss
         loss.backward()  # Backward pass
         optimizer.step()  # Update weights
 
         running_loss += loss.item() * inputs.size(0)
 
+    # Validation loop
     model.eval()
     val_loss = 0.0
     correct = 0
@@ -120,17 +97,19 @@ for epoch in range(num_epochs):
         f"Epoch {epoch+1}/{num_epochs}, Loss: {epoch_loss:.4f}, Validation Loss: {val_loss:.4f}"
     )
 
-    # scheduler.step()
-    # current_lr = optimizer.param_groups[0]["lr"]
-    # print(f"Current learning rate: {current_lr}")
+    scheduler.step()
+    current_lr = optimizer.param_groups[0]["lr"]
+    print(f"Current learning rate: {current_lr}")
 
 print("Finished Training")
 
 # Save the model's state dictionary
-torch.save(model.state_dict(), "inception_v3_2.pth")
+torch.save(model.state_dict(), "resnet101.pth")
 
+# Load the class labels
 class_labels = train_dataset.classes
 
+# Inference on the test dataset
 test_image_folder = "/home/shusrith/Downloads/aoml-hackathon-1/dataset/test"
 test_image_paths = [
     os.path.join(test_image_folder, fname) for fname in os.listdir(test_image_folder)
@@ -144,14 +123,14 @@ with torch.no_grad():
     for image_path in tqdm(test_image_paths):
         image = Image.open(image_path)
         image = (
-            transform(image).unsqueeze(0).to("cuda")
+            transform(image).unsqueeze(0).to(device)
         )  # Add batch dimension and move to GPU
         outputs = model(image)
         _, predicted = torch.max(outputs, 1)
         predicted_class.append(class_labels[predicted.item()])
         file_paths.append(image_path)
 
-# Create a DataFrame
+# Create a DataFrame for submission
 df = pd.DataFrame({"Image_Name": file_paths, "Class": predicted_class})
 df["Image_Name"] = df["Image_Name"].apply(lambda x: x.split("/")[-1])
 df.to_csv("submission.csv", index=False)

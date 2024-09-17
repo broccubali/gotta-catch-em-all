@@ -19,24 +19,7 @@ model.AuxLogits.fc = nn.Sequential(
 model.fc = nn.Sequential(
     nn.Dropout(p=0.3), nn.Linear(model.fc.in_features, num_classes)
 )
-state_dict = torch.load("inception_v3_1.pth")
 
-# Update the keys to match the new model structure
-new_state_dict = {}
-for key, value in state_dict.items():
-    if key == "AuxLogits.fc.weight":
-        new_state_dict["AuxLogits.fc.1.weight"] = value
-    elif key == "AuxLogits.fc.bias":
-        new_state_dict["AuxLogits.fc.1.bias"] = value
-    elif key == "fc.weight":
-        new_state_dict["fc.1.weight"] = value
-    elif key == "fc.bias":
-        new_state_dict["fc.1.bias"] = value
-    else:
-        new_state_dict[key] = value
-
-# Load the updated state dictionary into the model
-model.load_state_dict(new_state_dict)
 # Move the entire model to GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
@@ -53,15 +36,15 @@ transform = transforms.Compose(
         transforms.ToTensor(),  # Convert image to tensor
         transforms.Normalize(
             mean=[0.6020, 0.5866, 0.5546], std=[0.2477, 0.2404, 0.2478]
-        ),  # Normalize with ImageNet stats
+        ),  # Normalize with dataset stats
     ]
 )
 
 # Define the loss function and optimizer
-num_epochs = 20
+num_epochs = 60
 criterion = nn.CrossEntropyLoss()  # For classification
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-06)
-# scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
 
 train_dataset = datasets.ImageFolder(
     root="/home/shusrith/Downloads/aoml-hackathon-1/dataset/train", transform=transform
@@ -74,14 +57,15 @@ val_dataset = datasets.ImageFolder(
 )
 val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True, num_workers=4)
 
-device = "cuda"
+best_val_loss = float("inf")
+
 for epoch in range(num_epochs):
     model.train()  # Set the model to training mode
     running_loss = 0.0
 
     for inputs, labels in tqdm(train_loader):
-        inputs, labels = inputs.to("cuda"), labels.to(
-            "cuda"
+        inputs, labels = inputs.to(device), labels.to(
+            device
         )  # Move data to GPU if available
 
         optimizer.zero_grad()  # Zero the parameter gradients
@@ -120,14 +104,21 @@ for epoch in range(num_epochs):
         f"Epoch {epoch+1}/{num_epochs}, Loss: {epoch_loss:.4f}, Validation Loss: {val_loss:.4f}"
     )
 
-    # scheduler.step()
-    # current_lr = optimizer.param_groups[0]["lr"]
-    # print(f"Current learning rate: {current_lr}")
+    scheduler.step()
+    current_lr = optimizer.param_groups[0]["lr"]
+    print(f"Current learning rate: {current_lr}")
+
+    # Checkpoint the best model
+    if val_loss < best_val_loss:
+        best_val_loss = val_loss
+        if val_accuracy > 95:
+            torch.save(model.state_dict(), "inception_v3_best.pth")
+            print("Saved best model")
 
 print("Finished Training")
 
-# Save the model's state dictionary
-torch.save(model.state_dict(), "inception_v3_2.pth")
+# Save the final model's state dictionary
+torch.save(model.state_dict(), "inception_v3_final.pth")
 
 class_labels = train_dataset.classes
 
@@ -144,7 +135,7 @@ with torch.no_grad():
     for image_path in tqdm(test_image_paths):
         image = Image.open(image_path)
         image = (
-            transform(image).unsqueeze(0).to("cuda")
+            transform(image).unsqueeze(0).to(device)
         )  # Add batch dimension and move to GPU
         outputs = model(image)
         _, predicted = torch.max(outputs, 1)

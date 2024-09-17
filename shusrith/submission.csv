@@ -56,8 +56,8 @@ Image_Name,Class
 8942151448.jpg,Vaporeon
 4266821013.jpg,Vileplume
 2369453343.jpg,Spearow
-8740184094.jpg,Zubat
-3781360323.jpg,Dratini
+8740184094.jpg,Aerodactyl
+3781360323.jpg,Ekans
 4823614073.jpg,Ekans
 3795912456.jpg,Kangaskhan
 1191411990.jpg,Charizard
@@ -72,7 +72,7 @@ Image_Name,Class
 2442642177.jpg,Bellsprout
 9191453832.jpg,Electabuzz
 7745257994.jpg,Seadra
-3942836514.jpg,Seel
+3942836514.jpg,Machoke
 2913708009.jpg,Venusaur
 7896924361.jpg,Haunter
 7648588240.jpg,Poliwrath
@@ -141,7 +141,7 @@ Image_Name,Class
 2366918590.jpg,Wartortle
 2924322785.jpg,Fearow
 6509890246.jpg,Scyther
-3247035875.jpg,Poliwrath
+3247035875.jpg,Slowpoke
 7595895929.jpg,Jigglypuff
 4822126168.jpg,Slowpoke
 2419637058.jpg,Squirtle
@@ -173,7 +173,7 @@ Image_Name,Class
 7500461241.jpg,Electabuzz
 9829779532.jpg,Tentacruel
 3320038150.jpg,Clefairy
-2908519955.jpg,Pidgeot
+2908519955.jpg,Pidgeotto
 3758654792.jpg,Magnemite
 6081053484.jpg,Arbok
 9092594561.jpg,Kingler
@@ -252,7 +252,7 @@ Image_Name,Class
 1891105026.jpg,Tangela
 5176724343.jpg,Psyduck
 7166364155.jpg,Seadra
-5924345825.jpg,Staryu
+5924345825.jpg,Starmie
 2608335210.jpg,Kangaskhan
 4308319557.jpg,Nidorina
 1256893192.jpg,Ponyta
@@ -262,7 +262,7 @@ Image_Name,Class
 5609023237.jpg,Machop
 5804326449.jpg,Venonat
 1212395470.jpg,Mewtwo
-1776456672.jpg,Arbok
+1776456672.jpg,Charmeleon
 7440353562.jpg,Vileplume
 5544743323.jpg,Growlithe
 2954943424.jpg,Golbat
@@ -276,7 +276,7 @@ Image_Name,Class
 7852421372.jpg,Venonat
 8568963434.jpg,Magneton
 4155070010.jpg,Pikachu
-9523341333.jpg,Poliwag
+9523341333.jpg,Ekans
 6813046308.jpg,Haunter
 6145340383.jpg,Gengar
 1622248996.jpg,Staryu
@@ -333,7 +333,7 @@ Image_Name,Class
 6827379919.jpg,Alakazam
 1346762495.jpg,Cubone
 4882304336.jpg,Machoke
-2165073465.jpg,Aerodactyl
+2165073465.jpg,Venomoth
 6513621953.jpg,Electabuzz
 7293312609.jpg,Jolteon
 1937758939.jpg,Poliwrath
@@ -379,9 +379,9 @@ Image_Name,Class
 2785462169.jpg,Poliwag
 8700523305.jpg,Gastly
 7676896211.jpg,Arcanine
-7393787547.jpg,Alakazam
+7393787547.jpg,Haunter
 2433514669.jpg,Scyther
-9868204484.jpg,Poliwrath
+9868204484.jpg,Poliwhirl
 9170259658.jpg,Flareon
 6141338509.jpg,Haunter
 8250388571.jpg,Poliwrath
@@ -402,7 +402,7 @@ Image_Name,Class
 5188015578.jpg,Porygon
 9757863926.jpg,Raichu
 3027342205.jpg,Tentacruel
-3325657627.jpg,Pidgeotto
+3325657627.jpg,Machop
 1491934328.jpg,Fearow
 9049645071.jpg,Kadabra
 1152758431.jpg,Exeggcute
@@ -425,7 +425,7 @@ Image_Name,Class
 9553306699.jpg,Spearow
 7949546083.jpg,Slowbro
 9607051670.jpg,Ponyta
-7074499044.jpg,Poliwrath
+7074499044.jpg,Grimer
 2518083474.jpg,Ditto
 4094701276.jpg,Exeggcute
 1817073211.jpg,Shellder
@@ -438,7 +438,7 @@ Image_Name,Class
 3793226037.jpg,Weepinbell
 1170159631.jpg,Primeape
 4645339632.jpg,Magnemite
-5876331394.jpg,Mew
+5876331394.jpg,Mankey
 8657977124.jpg,Magmar
 7442124466.jpg,Geodude
 7206434897.jpg,Vaporeon
@@ -515,7 +515,7 @@ Image_Name,Class
 6288351496.jpg,Arbok
 8121310460.jpg,Eevee
 5412920355.jpg,Doduo
-6507891406.jpg,Seel
+6507891406.jpg,Mr. Mime
 3631617925.jpg,Clefairy
 1452246003.jpg,Raichu
 1056182305.jpg,Venusaur
@@ -534,7 +534,7 @@ Image_Name,Class
 3510502139.jpg,Kakuna
 1104259989.jpg,Snorlax
 1705406618.jpg,Vaporeon
-8089184699.jpg,Rapidash
+8089184699.jpg,Moltres
 7132405597.jpg,Vaporeon
 7226066205.jpg,Wigglytuff
 7757705575.jpg,Farfetchd
@@ -604,12 +604,12 @@ Image_Name,Class
 8344705642.jpg,Tangela
 3891509530.jpg,Pidgeot
 9784346064.jpg,Clefable
-3277945556.jpg,Koffing
+3277945556.jpg,Weezing
 4962325610.jpg,Snorlax
 7863843353.jpg,Raticate
 9037122904.jpg,Mankey
 3011925873.jpg,Dratini
-1543101259.jpg,Lickitung
+1543101259.jpg,Dragonite
 5925826504.jpg,Exeggcute
 4306914677.jpg,Venusaur
 7288815827.jpg,Zapdos
@@ -646,7 +646,7 @@ Image_Name,Class
 9829846130.jpg,Mankey
 7083406672.jpg,Mankey
 4344996472.jpg,Nidorina
-1563204923.jpg,Exeggutor
+1563204923.jpg,Tangela
 6275831459.jpg,Nidoking
 4476168386.jpg,Caterpie
 6154386925.jpg,Drowzee
@@ -673,7 +673,7 @@ Image_Name,Class
 4669451645.jpg,Beedrill
 6162747259.jpg,Gastly
 4198810628.jpg,Lickitung
-8965451250.jpg,Mr. Mime
+8965451250.jpg,Pikachu
 1515132213.jpg,Jigglypuff
 2266826142.jpg,Psyduck
 4892169480.jpg,Tentacool
@@ -682,7 +682,7 @@ Image_Name,Class
 7548357294.jpg,Kadabra
 1967291562.jpg,Shellder
 7230567581.jpg,Tangela
-2727538724.jpg,Charmeleon
+2727538724.jpg,Rattata
 3422028143.jpg,Sandslash
 4995824153.jpg,Seaking
 6839900891.jpg,Grimer
@@ -697,7 +697,7 @@ Image_Name,Class
 6892143999.jpg,Staryu
 8907314998.jpg,Machop
 1924265615.jpg,Sandslash
-2698498931.jpg,Jigglypuff
+2698498931.jpg,Raticate
 8410022954.jpg,Tangela
 4039501997.jpg,Weedle
 4633920131.jpg,Tauros
@@ -720,7 +720,7 @@ Image_Name,Class
 5897259197.jpg,Aerodactyl
 7041268129.jpg,Shellder
 9989408506.jpg,Vulpix
-5306208251.jpg,Bulbasaur
+5306208251.jpg,Dragonair
 3911395604.jpg,Slowbro
 8960073972.jpg,Dodrio
 7913269098.jpg,Cloyster
@@ -786,7 +786,7 @@ Image_Name,Class
 8347273955.jpg,Vulpix
 7669756621.jpg,Marowak
 7947025120.jpg,Meowth
-7864999887.jpg,Rapidash
+7864999887.jpg,Rhyhorn
 8330435871.jpg,Rapidash
 3523515189.jpg,Weedle
 6079401894.jpg,Growlithe
@@ -803,7 +803,7 @@ Image_Name,Class
 7364239784.jpg,Wigglytuff
 2419137024.jpg,Voltorb
 8379933251.jpg,Flareon
-7425341764.jpg,Charmeleon
+7425341764.jpg,Alakazam
 7949805983.jpg,Ivysaur
 5478239163.jpg,Vileplume
 6993293090.jpg,Metapod
@@ -838,7 +838,7 @@ Image_Name,Class
 3351749480.jpg,Charmeleon
 8736716687.jpg,Snorlax
 3322779993.jpg,Magneton
-4714539631.jpg,Goldeen
+4714539631.jpg,Magnemite
 3723014983.jpg,Omastar
 3303665113.jpg,Electabuzz
 7429058468.jpg,Geodude
@@ -863,19 +863,19 @@ Image_Name,Class
 1438365279.jpg,Dragonair
 8810519102.jpg,Chansey
 7890435808.jpg,Snorlax
-4225177749.jpg,Nidoking
+4225177749.jpg,Nidoqueen
 2922139380.jpg,Vulpix
 9785293138.jpg,Jigglypuff
 1778715243.jpg,Metapod
 3582919565.jpg,Ditto
 7352602392.jpg,Alakazam
-6116121771.jpg,Horsea
+6116121771.jpg,Caterpie
 8990130685.jpg,Tentacruel
 8591700599.jpg,Nidorino
 7230947549.jpg,Snorlax
 5808258007.jpg,Goldeen
 2704011523.jpg,Metapod
-3119912684.jpg,Cubone
+3119912684.jpg,Wartortle
 5338518321.jpg,Rhydon
 1228650885.jpg,Graveler
 8763042147.jpg,Dewgong
@@ -952,16 +952,16 @@ Image_Name,Class
 2954069483.jpg,Nidorino
 9410782643.jpg,Vileplume
 4232342329.jpg,Poliwrath
-6166003893.jpg,Pidgey
+6166003893.jpg,Pidgeot
 2178405175.jpg,Rhydon
-1852463636.jpg,Pidgey
+1852463636.jpg,Farfetchd
 8263590896.jpg,Flareon
-1101552873.jpg,Caterpie
+1101552873.jpg,Weedle
 2072598406.jpg,Weedle
 7150156430.jpg,Venomoth
 9458023899.jpg,Ponyta
 1181998206.jpg,Gyarados
-9867536171.jpg,Venomoth
+9867536171.jpg,Scyther
 5072661108.jpg,Sandshrew
 7813641600.jpg,Graveler
 8983290367.jpg,Ponyta
@@ -991,7 +991,7 @@ Image_Name,Class
 4214278429.jpg,Charizard
 8531961247.jpg,Zapdos
 6786751724.jpg,Starmie
-4929160705.jpg,Kingler
+4929160705.jpg,Mankey
 6292371311.jpg,Hitmonlee
 3033966433.jpg,Snorlax
 3834871227.jpg,Pinsir
@@ -1023,7 +1023,7 @@ Image_Name,Class
 3324366085.jpg,Magmar
 4292913719.jpg,Raichu
 4725070026.jpg,Tauros
-8992363640.jpg,Porygon
+8992363640.jpg,Dewgong
 5517854292.jpg,Weezing
 3790264318.jpg,Weezing
 8627133065.jpg,Growlithe
@@ -1051,7 +1051,7 @@ Image_Name,Class
 7335680810.jpg,Snorlax
 1457206313.jpg,Blastoise
 7041809503.jpg,Clefairy
-5531215717.jpg,Pidgey
+5531215717.jpg,Pidgeotto
 4195302313.jpg,Exeggutor
 3718326192.jpg,Moltres
 9736565115.jpg,Kingler
@@ -1135,7 +1135,7 @@ Image_Name,Class
 8618667775.jpg,Jynx
 9420160644.jpg,Magmar
 8582439248.jpg,Tauros
-1118315850.jpg,Beedrill
+1118315850.jpg,Pidgeotto
 5914945000.jpg,Haunter
 1786434776.jpg,Victreebel
 9038392690.jpg,Ponyta
@@ -1230,8 +1230,8 @@ Image_Name,Class
 6576549345.jpg,Seel
 6427759341.jpg,Pikachu
 6361445245.jpg,Jigglypuff
-3288387144.jpg,Pidgeot
-1912686671.jpg,Scyther
+3288387144.jpg,Pidgeotto
+1912686671.jpg,Mewtwo
 5464543692.jpg,Sandshrew
 3958404730.jpg,Primeape
 4674870420.jpg,Gengar
@@ -1250,14 +1250,14 @@ Image_Name,Class
 8522018355.jpg,Poliwag
 7798697930.jpg,Vaporeon
 4610834912.jpg,Gastly
-1798393164.jpg,Mew
+1798393164.jpg,Machoke
 7202225617.jpg,Eevee
 7153910015.jpg,Nidoking
 2760157104.jpg,Aerodactyl
 6491305261.jpg,Rapidash
 5271660649.jpg,Machamp
 1810880288.jpg,Gastly
-7931678201.jpg,Venusaur
+7931678201.jpg,Tangela
 7942786352.jpg,Geodude
 9994759375.jpg,Poliwhirl
 4826739352.jpg,Clefable
@@ -1284,7 +1284,7 @@ Image_Name,Class
 5118187879.jpg,Parasect
 7647012479.jpg,Cloyster
 3853291206.jpg,Squirtle
-7106428040.jpg,Abra
+7106428040.jpg,Kabutops
 4971116226.jpg,Cloyster
 6268323321.jpg,Venomoth
 7157773778.jpg,Vaporeon
@@ -1349,7 +1349,7 @@ Image_Name,Class
 7127633535.jpg,Farfetchd
 2959249802.jpg,Weedle
 5371457006.jpg,Oddish
-9345095722.jpg,Exeggcute
+9345095722.jpg,Sandshrew
 9438260420.jpg,Pidgeotto
 7073490835.jpg,Graveler
 1473000388.jpg,Geodude
@@ -1388,7 +1388,7 @@ Image_Name,Class
 2598039473.jpg,Ekans
 9351048667.jpg,Pikachu
 9839075838.jpg,Lapras
-7698903135.jpg,Marowak
+7698903135.jpg,Cloyster
 4253904857.jpg,Exeggcute
 8082688235.jpg,Nidoking
 8036047553.jpg,Poliwag
@@ -1425,7 +1425,7 @@ Image_Name,Class
 4167112952.jpg,Nidorino
 9518427083.jpg,Pidgey
 6709892441.jpg,Bellsprout
-6002767266.jpg,Mr. Mime
+6002767266.jpg,Hitmonchan
 3232497270.jpg,Venomoth
 3392472784.jpg,Haunter
 3772291604.jpg,Raticate
@@ -1606,7 +1606,7 @@ Image_Name,Class
 3111282370.jpg,Poliwag
 1898656990.jpg,Ekans
 4776674153.jpg,Dugtrio
-8804269441.jpg,Tentacool
+8804269441.jpg,Venonat
 4329848625.jpg,Tauros
 2637960696.jpg,Goldeen
 1201937983.jpg,Nidoqueen
@@ -1616,7 +1616,7 @@ Image_Name,Class
 6382891146.jpg,Dodrio
 4549713815.jpg,Hitmonchan
 4768633361.jpg,Raichu
-8751435560.jpg,Dratini
+8751435560.jpg,Poliwag
 4359449241.jpg,Nidoqueen
 5365955449.jpg,Ditto
 5159666847.jpg,Growlithe
@@ -1666,7 +1666,7 @@ Image_Name,Class
 5410317890.jpg,Clefable
 5610045774.jpg,Flareon
 4098570513.jpg,Electabuzz
-1227184887.jpg,Pidgeotto
+1227184887.jpg,Fearow
 3248685337.jpg,Pidgeot
 8797616399.jpg,Machop
 2182610449.jpg,Gyarados
@@ -1703,7 +1703,7 @@ Image_Name,Class
 4610327119.jpg,Dewgong
 1796445568.jpg,Caterpie
 2375578110.jpg,Mewtwo
-4659537525.jpg,Zubat
+4659537525.jpg,Golbat
 1899944705.jpg,Goldeen
 2899826579.jpg,Pikachu
 1718894547.jpg,Wartortle
@@ -1776,7 +1776,7 @@ Image_Name,Class
 5459513419.jpg,Farfetchd
 4031311498.jpg,Gengar
 6499637240.jpg,Drowzee
-2019878637.jpg,Geodude
+2019878637.jpg,Gastly
 4318135974.jpg,Hitmonlee
 7248431351.jpg,Snorlax
 7121077271.jpg,Jynx
@@ -1809,11 +1809,11 @@ Image_Name,Class
 5696072098.jpg,Magnemite
 9838857076.jpg,Chansey
 9385845217.jpg,Gastly
-4444105982.jpg,Fearow
+4444105982.jpg,Sandslash
 5923742203.jpg,Magmar
 3960469396.jpg,Vulpix
 8655724267.jpg,Growlithe
-2411300912.jpg,Pidgeot
+2411300912.jpg,Alakazam
 7774005015.jpg,Zapdos
 2536026402.jpg,Machoke
 4240789062.jpg,Spearow
