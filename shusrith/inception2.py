@@ -14,32 +14,39 @@ model = models.inception_v3(pretrained=True)
 # Modify the final layer to match the number of classes in your dataset
 num_classes = 143  # Set to your dataset's number of classes
 model.AuxLogits.fc = nn.Sequential(
-    nn.Dropout(p=0.3), nn.Linear(model.AuxLogits.fc.in_features, num_classes)
+    nn.Dropout(p=0.5),  # Increase dropout rate
+    nn.Linear(model.AuxLogits.fc.in_features, 512),  # Add an intermediate layer
+    nn.BatchNorm1d(512),  # Add batch normalization
+    nn.ReLU(),  # Add ReLU activation
+    nn.Dropout(p=0.5),  # Increase dropout rate
+    nn.Linear(512, num_classes),  # Final layer
 )
 model.fc = nn.Sequential(
-    nn.Dropout(p=0.3), nn.Linear(model.fc.in_features, num_classes)
+    nn.Dropout(p=0.5),  # Increase dropout rate
+    nn.Linear(model.fc.in_features, 512),  # Add an intermediate layer
+    nn.BatchNorm1d(512),  # Add batch normalization
+    nn.ReLU(),  # Add ReLU activation
+    nn.Dropout(p=0.5),  # Increase dropout rate
+    nn.Linear(512, num_classes),  # Final layer
 )
+
 # Fine-tune more layers
 for param in model.parameters():
     param.requires_grad = True
-state_dict = torch.load("inception_v3_best.pth")
 
-# Update the keys to match the new model structure
-new_state_dict = {}
-for key, value in state_dict.items():
-    if key == "AuxLogits.fc.weight":
-        new_state_dict["AuxLogits.fc.1.weight"] = value
-    elif key == "AuxLogits.fc.bias":
-        new_state_dict["AuxLogits.fc.1.bias"] = value
-    elif key == "fc.weight":
-        new_state_dict["fc.1.weight"] = value
-    elif key == "fc.bias":
-        new_state_dict["fc.1.bias"] = value
-    else:
-        new_state_dict[key] = value
+# # Load the pre-trained state dictionary
+# state_dict = torch.load("inception_v3_final.pth")
 
-# Load the updated state dictionary into the model
-model.load_state_dict(new_state_dict)  # Move the entire model to GPU
+# # # Update the keys to match the new model structure
+# new_state_dict = model.state_dict()
+# for key, value in state_dict.items():
+#     if key in new_state_dict and value.shape == new_state_dict[key].shape:
+#         new_state_dict[key] = value
+
+# # Load the updated state dictionary into the model
+# model.load_state_dict(new_state_dict)
+
+# Move the entire model to GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
@@ -48,10 +55,12 @@ transform = transforms.Compose(
     [
         transforms.Resize((299, 299)),  # Resize images to 299x299 for Inception v3
         transforms.RandomHorizontalFlip(),  # Random horizontal flip
-        transforms.RandomRotation(10),  # Random rotation
+        transforms.RandomVerticalFlip(),  # Random vertical flip
+        transforms.RandomRotation(30),  # Increase random rotation
         transforms.ColorJitter(
-            brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2
-        ),  # Random color jitter
+            brightness=0.4, contrast=0.4, saturation=0.4, hue=0.4
+        ),  # Increase random color jitter
+        transforms.RandomResizedCrop(299, scale=(0.8, 1.0)),  # Random resized crop
         transforms.ToTensor(),  # Convert image to tensor
         transforms.Normalize(
             mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
@@ -61,10 +70,9 @@ transform = transforms.Compose(
 
 # Define the loss function and optimizer
 num_epochs = 20
-criterion = nn.CrossEntropyLoss()  # For classification
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-4)
-scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, num_epochs)
-
+criterion = nn.CrossEntropyLoss(label_smoothing=0.1)  # For classification
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-5, weight_decay=1e-4)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
 train_dataset = datasets.ImageFolder(
     root="/home/shusrith/Downloads/aoml-hackathon-1/dataset/train", transform=transform
 )
@@ -120,24 +128,23 @@ for epoch in range(num_epochs):
 
     epoch_loss = running_loss / len(train_loader.dataset)
     print(
-        f"Epoch {epoch+1}/{num_epochs}, Loss: {epoch_loss:.4f}, Validation Loss: {val_loss:.4f}"
+        f"Epoch {epoch}/{num_epochs}, Loss: {epoch_loss:.4f}, Validation Loss: {val_loss:.4f}"
     )
 
-    # scheduler.step(val_loss)
+    scheduler.step()
     current_lr = optimizer.param_groups[0]["lr"]
     print(f"Current learning rate: {current_lr}")
 
     # Checkpoint the best model
     if val_loss < best_val_loss:
         best_val_loss = val_loss
-        torch.save(model.state_dict(), f"inception_v3_{best_val_loss}.pth")
+        torch.save(model.state_dict(), f"inception_v3_{best_val_loss:.4f}.pth")
         print("Saved best model")
-    print("best val loss", best_val_loss)
 
 print("Finished Training")
 
 # Save the final model's state dictionary
-torch.save(model.state_dict(), "inception_v3_final1.pth")
+torch.save(model.state_dict(), "inception_v3_final2.pth")
 
 class_labels = train_dataset.classes
 

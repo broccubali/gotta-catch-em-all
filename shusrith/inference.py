@@ -20,7 +20,7 @@ model.fc = nn.Sequential(
 # Fine-tune more layers
 for param in model.parameters():
     param.requires_grad = True
-state_dict = torch.load("inception_v3_best.pth")
+state_dict = torch.load("inception_v3_0.2949068700959039.pth")
 
 # Update the keys to match the new model structure
 new_state_dict = {}

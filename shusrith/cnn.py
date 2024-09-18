@@ -6,40 +6,47 @@ import torch
 import torch.optim as optim
 import pandas as pd
 import os
+import torch.nn.functional as F
 from PIL import Image
 
-# Load the pre-trained Inception v3 model
-model = models.inception_v3(pretrained=True)
 
-# Modify the final layer to match the number of classes in your dataset
-num_classes = 143  # Set to your dataset's number of classes
-model.AuxLogits.fc = nn.Sequential(
-    nn.Dropout(p=0.3), nn.Linear(model.AuxLogits.fc.in_features, num_classes)
-)
-model.fc = nn.Sequential(
-    nn.Dropout(p=0.3), nn.Linear(model.fc.in_features, num_classes)
-)
-# Fine-tune more layers
-for param in model.parameters():
-    param.requires_grad = True
-state_dict = torch.load("inception_v3_best.pth")
+class CNN(nn.Module):
+    def __init__(self, num_classes=143):
+        super(CNN, self).__init__()
+        # Convolutional Layer 1
+        self.conv1 = nn.Conv2d(
+            3, 32, kernel_size=3, padding=1
+        )  # Change input channels to 3
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
 
-# Update the keys to match the new model structure
-new_state_dict = {}
-for key, value in state_dict.items():
-    if key == "AuxLogits.fc.weight":
-        new_state_dict["AuxLogits.fc.1.weight"] = value
-    elif key == "AuxLogits.fc.bias":
-        new_state_dict["AuxLogits.fc.1.bias"] = value
-    elif key == "fc.weight":
-        new_state_dict["fc.1.weight"] = value
-    elif key == "fc.bias":
-        new_state_dict["fc.1.bias"] = value
-    else:
-        new_state_dict[key] = value
+        # Convolutional Layer 2
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
 
+        # Convolutional Layer 3
+        self.conv3 = nn.Conv2d(64, 64, kernel_size=3, padding=1)
+
+        # Calculate the size of the flattened feature map
+        self.flattened_size = 64 * (299 // 2 // 2 // 2) * (299 // 2 // 2 // 2)
+
+        # Fully Connected Layer 1
+        self.fc1 = nn.Linear(self.flattened_size, 64)
+
+        # Output Layer
+        self.fc2 = nn.Linear(64, num_classes)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))  # Conv Layer 1 + ReLU + Max Pool
+        x = self.pool(F.relu(self.conv2(x)))  # Conv Layer 2 + ReLU + Max Pool
+        x = self.pool(F.relu(self.conv3(x)))  # Conv Layer 3 + ReLU + Max Pool
+        x = x.view(-1, self.flattened_size)  # Flatten the output
+        x = F.relu(self.fc1(x))  # Fully Connected Layer 1 + ReLU
+        x = self.fc2(x)  # Output Layer
+        return F.log_softmax(x, dim=1)
+
+
+# Instantiate the model
+model = CNN(num_classes=143)
 # Load the updated state dictionary into the model
-model.load_state_dict(new_state_dict)  # Move the entire model to GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
@@ -63,7 +70,7 @@ transform = transforms.Compose(
 num_epochs = 20
 criterion = nn.CrossEntropyLoss()  # For classification
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-4)
-scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, num_epochs)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
 
 train_dataset = datasets.ImageFolder(
     root="/home/shusrith/Downloads/aoml-hackathon-1/dataset/train", transform=transform
@@ -89,10 +96,8 @@ for epoch in range(num_epochs):
 
         optimizer.zero_grad()  # Zero the parameter gradients
 
-        outputs, aux_outputs = model(inputs)  # Forward pass
-        loss1 = criterion(outputs, labels)  # Compute loss for main output
-        loss2 = criterion(aux_outputs, labels)  # Compute loss for auxiliary output
-        loss = loss1 + 0.4 * loss2  # Combine losses
+        outputs = model(inputs)  # Forward pass
+        loss = criterion(outputs, labels)  # Compute loss for main output
         loss.backward()  # Backward pass
         optimizer.step()  # Update weights
 
@@ -128,9 +133,9 @@ for epoch in range(num_epochs):
     print(f"Current learning rate: {current_lr}")
 
     # Checkpoint the best model
-    if val_loss < best_val_loss:
+    if val_loss < best_val_loss and val_accuracy > 90:
         best_val_loss = val_loss
-        torch.save(model.state_dict(), f"inception_v3_{best_val_loss}.pth")
+        torch.save(model.state_dict(), f"inception_v3_{best_val_loss:.4f}.pth")
         print("Saved best model")
     print("best val loss", best_val_loss)
 
